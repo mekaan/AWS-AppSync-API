@@ -32,12 +32,13 @@ export async function add (event, context) {
   }
 }
 
-export async function get (event, context) {
+export async function getById (event, context) {
   try{
+    const id = event.id
     const params ={
       TableName: process.env.tableName,
       Key:{
-        id: event.id,
+        id: id,
       },
     };
 

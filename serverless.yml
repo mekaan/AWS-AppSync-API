@@ -73,8 +73,6 @@ custom:
 #    - exclude-me-dir/**
 
 functions:
-  hello:
-    handler: handler.hello
   add:
     handler: handler.add
     events:
@@ -82,13 +80,16 @@ functions:
           path: add
           method: put
           integration: lambda
-  get:
-    handler: handler.get
+  getById:
+    handler: handler.getById
     events:
       - http:
-          path: get
+          path: getById
           method: get
           integration: lambda
+          request:
+            template:
+              application/json: '{ "id" : "$input.params(''id'')"}'
 #    The following are a few example events you can configure
 #    NOTE: Please make sure to change your handler code to work with those events
 #    Check the event documentation for details
@@ -144,4 +145,6 @@ resources:
           -
             AttributeName: "id"
             KeyType: "HASH"
+        StreamSpecification:
+          StreamViewType: "NEW_AND_OLD_IMAGES"
         BillingMode: PAY_PER_REQUEST
