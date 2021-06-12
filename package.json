@@ -16,5 +16,11 @@
   "bugs": {
     "url": "https://github.com/mekaan/AWS-AppSync-API/issues"
   },
-  "homepage": "https://github.com/mekaan/AWS-AppSync-API#readme"
+  "homepage": "https://github.com/mekaan/AWS-AppSync-API#readme",
+  "devDependencies": {
+    "serverless-bundle": "^4.3.1"
+  },
+  "dependencies": {
+    "aws-sdk": "^2.927.0"
+  }
 }
