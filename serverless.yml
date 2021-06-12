@@ -7,7 +7,7 @@ app: appsync
 
 # You can pin your service to only deploy with a specific Serverless version
 # Check out our docs for more details
-frameworkVersion: '2'
+frameworkVersion: '2.30.3'
 
 provider:
   name: aws
@@ -30,9 +30,19 @@ provider:
             - dynamodb:PutItem
           Resource: "*"
 
+plugins:
+  - serverless-bundle
+
 custom:
   tableName: students-${self:custom.stage}
   stage: ${opt:stage, self:provider.stage}
+  bundle:
+    linting: false
+    sourcemaps: false
+    caching: false
+    stats: false
+    ignorePlugins:
+        - 'pg-hstore'
 # you can add statements to the Lambda function's IAM Role here
 #  iamRoleStatements:
 #    - Effect: "Allow"
