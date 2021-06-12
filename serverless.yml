@@ -13,6 +13,12 @@ provider:
   name: aws
   runtime: nodejs12.x
   lambdaHashingVersion: 20201221
+  stage: ${opt:stage, 'dev'}
+  region: eu-west-2
+  profile: staAccount
+  environment:
+    stage: ${self:custom.stage}
+    tableName: ${self:custom.tableName}
   iam:
     role:
       statements:
@@ -26,9 +32,7 @@ provider:
 
 custom:
   tableName: students-${self:custom.stage}
-  stage: ${opt:stage, 'dev'}
-  myRegion: eu-west-2
-  profile: staAccount
+  stage: ${opt:stage, self:provider.stage}
 # you can add statements to the Lambda function's IAM Role here
 #  iamRoleStatements:
 #    - Effect: "Allow"
@@ -65,9 +69,16 @@ functions:
     handler: handler.add
     events:
       - http:
-          path: user
+          path: add
           method: put
-          integration: lambda    
+          integration: lambda
+  get:
+    handler: handler.get
+    events:
+      - http:
+          path: get
+          method: get
+          integration: lambda
 #    The following are a few example events you can configure
 #    NOTE: Please make sure to change your handler code to work with those events
 #    Check the event documentation for details

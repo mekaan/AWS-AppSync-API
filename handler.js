@@ -1,4 +1,5 @@
 'use strict';
+import { success, failure } from "libs/response-lib";
 const client = new AWS.DynamoDB.DocumentClient();
 
 module.exports.hello = async (event) => {
@@ -42,5 +43,26 @@ export async function add (event, context) {
 
   } catch (e) {
     return failure({status: false, error: e.message});
+  }
+}
+
+export async function get (event, context) {
+  try{
+    const params ={
+      TableName: process.env.tableName,
+      Key:{
+        id: event.id,
+      },
+    };
+
+    const data = client.get(params).promise()
+    if(data.Item) {
+      return success(data.Item);
+    } else {
+      return failure({status: false, error : "Student do not exists!"})
+    }
+
+  } catch (e){
+    return failure({status: false, error: e.message})
   }
 }
