@@ -94,3 +94,19 @@ export async function update (event, context) {
     return failure({status: false, error: e.message});
   }
 }
+
+export async function deleteStudent (event, context) {
+  try{
+    const id = event.body.id
+    const params = {
+      TableName: process.env.tableName,
+      Key: {
+        id: id
+      },
+    }; 
+    await client.delete(params).promise();
+    return success({ message: 'success'}) 
+  } catch (e) {
+    return failure({status: false, error: e.message});
+  }
+}
