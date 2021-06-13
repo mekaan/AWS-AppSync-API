@@ -53,3 +53,44 @@ export async function getById (event, context) {
     return failure({status: false, error: e.message});
   }
 }
+
+export async function update (event, context) {
+  try{
+    const id = event.body.id
+    const attrbs = event.body
+
+    //create update expression
+    const date = new Date()
+    let update_expression = "set #updated_at = :updated_at"
+    const expression_attribute_names = {
+      '#updated_at': 'updated_at'
+    }
+    const expression_attribute_values = {
+      ':updated_at': date.toISOString()
+    }
+    const keys = Object.keys(attrbs).filter(x => x !== "id")
+    for (let i = 0; i < keys.length; i++) {
+      update_expression += ', '
+      const name = '#' + keys[i]
+      const val = ':' + keys[i]
+      expression_attribute_names[name] = keys[i]
+      expression_attribute_values[val] = attrbs[keys[i]]
+      update_expression = update_expression + name + ' = ' + val
+    }
+    //return {expression_attribute_names,expression_attribute_values}
+    //
+    const params = {
+      TableName: process.env.tableName,
+      Key: {
+        id: id
+      },
+      UpdateExpression: update_expression,
+      ExpressionAttributeNames: expression_attribute_names,
+      ExpressionAttributeValues: expression_attribute_values
+    }
+    await client.update(params).promise();
+    return success({ message: 'success'})
+  } catch (e) {
+    return failure({status: false, error: e.message});
+  }
+}

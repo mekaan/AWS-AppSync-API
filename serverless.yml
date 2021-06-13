@@ -28,6 +28,7 @@ provider:
             - dynamodb:Scan
             - dynamodb:GetItem
             - dynamodb:PutItem
+            - dynamodb:UpdateItem
           Resource: "*"
 
 plugins:
@@ -90,6 +91,13 @@ functions:
           request:
             template:
               application/json: '{ "id" : "$input.params(''id'')"}'
+  update:
+    handler: handler.update
+    events:
+      - http:
+          path: update
+          method: post
+          integration: lambda
 #    The following are a few example events you can configure
 #    NOTE: Please make sure to change your handler code to work with those events
 #    Check the event documentation for details
