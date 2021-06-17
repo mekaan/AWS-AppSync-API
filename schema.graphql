@@ -1,40 +1,28 @@
-type Schema {
+schema {
     query: Query
     mutation: Mutation
 }
 
 type Query {
-    batchGetStudents(id: [String]): Student
-    getStudent(id: String!): Student
+    getById(id: String!): Student
 }
 
 type Mutation{
-    createStudent(input: CreateStudentInput!): Student
-    updateStudent(input: UpdateStudentInput!): Student
-    deteleStudent(input: DeleteStudentInput!): Student
+    create(id: String!,name: String, surname: String, preference: String): Student
+    update(id: String!, name: String, surname: String, preference: String): Message
+    deleteStudent(id: String!): Message
+}
+
+type Message{
+    message: String
 }
 
 type Student{
-    createdAt: AWSDateTime
+    created_at: AWSDateTime
     id: String!
     name: String
     surname: String
     preference: String
-    updatedAt: AWSDateTime
+    updated_at: AWSDateTime
 }
 
-input StudentCreateInput{
-    id: String!
-    name: String
-    surname: String
-    preference: String
-}
-input StudentDeleteInput{
-    id: String!
-}
-input StudentUpdateInput{
-    id: String!
-    name: String
-    surname: String
-    preference: String
-}
