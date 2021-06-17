@@ -3,7 +3,7 @@ import AWS from "aws-sdk";
 const client = new AWS.DynamoDB.DocumentClient();
 
 
-export async function add (event, context) {
+export async function create (event, context) {
   try{
     //event body -> id, name, surname
     const data = event.body;
@@ -34,7 +34,7 @@ export async function add (event, context) {
 
 export async function getById (event, context) {
   try{
-    const id = event.id
+    const id = event.body.id
     const params ={
       TableName: process.env.tableName,
       Key:{
