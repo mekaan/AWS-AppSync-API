@@ -38,6 +38,7 @@ plugins:
 
 custom:
   tableName: students-${self:custom.stage}
+  cognitoPoolName: ${self:custom.stage}-appsync-api-cognito
   stage: ${opt:stage, self:provider.stage}
   bundle:
     linting: false
@@ -46,7 +47,7 @@ custom:
     stats: false
     ignorePlugins:
         - 'pg-hstore'
-  
+
 
 # you can add statements to the Lambda function's IAM Role here
 #  iamRoleStatements:
@@ -173,7 +174,7 @@ resources:
     CognitoUserPool:
       Type: AWS::Cognito::UserPool
       Properties:
-        UserPoolName: ${self:custom.cognitoPoolName}
+        UserPoolName: ${self:custom.cognitoPoolName}-user-pool
         UsernameAttributes:
           - email
     #Cognito - Client
@@ -187,7 +188,7 @@ resources:
     CognitoIdentityPool:
       Type: AWS::Cognito::IdentityPool
       Properties:
-        IdentityPoolName: cognito_sls_appsync_identity_pool
+        IdentityPoolName: ${self:custom.cognitoPoolName}-identity-pool
         AllowUnauthenticatedIdentities: false
         CognitoIdentityProviders:
           - ClientId:
@@ -208,7 +209,7 @@ resources:
     CognitoAuthRole:
       Type: AWS::IAM::Role
       Properties:
-        RoleName: cognito_sls_appsync_appAuthRole
+        RoleName: ${self:custom.cognitoPoolName}-appAuthRole
         Path: /
         AssumeRolePolicyDocument:
           Version: "2012-10-17"
@@ -242,7 +243,7 @@ resources:
     CognitoUnauthRole:
       Type: AWS::IAM::Role
       Properties:
-        RoleName: cognito_sls_appsync_appUnauthRole
+        RoleName: ${self:custom.cognitoPoolName}-appUnauthRole
         Path: /
         AssumeRolePolicyDocument:
           Version: "2012-10-17"
