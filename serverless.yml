@@ -48,6 +48,59 @@ custom:
     ignorePlugins:
         - 'pg-hstore'
 
+  appSync:
+    name:  student-appsync-api-${self:custom.stage}
+    serviceRole: "AppSyncAPIServiceRole"
+    # apiKey # only required for update-appsync/delete-appsync
+    # apiId # if provided, will update the specified API.
+    authenticationType: AMAZON_COGNITO_USER_POOLS
+    # AMAZON_COGNITO_USER_POOLS
+    userPoolConfig:
+      awsRegion: eu-west-2
+      defaultAction: ALLOW
+      userPoolId: {Ref: CognitoUserPool}
+    mappingTemplates:
+      - type: Query
+        request: "request/getById-request-mapping-template.txt"
+        response: "response/response-mapping-template.txt"
+        dataSource: getStudentLambdaDataSource
+        field: getById
+      - type: Mutation
+        request: "request/create-request-mapping-template.txt"
+        response: "response/response-mapping-template.txt"
+        dataSource: createStudentLambdaDataSource
+        field: create
+      - type: Mutation
+        request: "request/update-request-mapping-template.txt"
+        response: "response/response-mapping-template.txt"
+        dataSource: updateStudentLambdaDataSource
+        field: update
+      - type: Mutation
+        request: "request/delete-request-mapping-template.txt"
+        response: "response/response-mapping-template.txt"
+        dataSource: deleteStudentStudentLambdaDataSource
+        field: deleteStudent
+    dataSources:
+      - type: AWS_LAMBDA
+        name: getStudentLambdaDataSource
+        description: "get's student by id"
+        config:
+          functionName: getById
+      - type: AWS_LAMBDA
+        name: createStudentLambdaDataSource
+        description: "creates studentd"
+        config:
+          functionName: create
+      - type: AWS_LAMBDA
+        name: updateStudentLambdaDataSource
+        description: "updates student"
+        config:
+          functionName: update
+      - type: AWS_LAMBDA
+        name: deleteStudentStudentLambdaDataSource
+        description: "delete student"
+        config:
+          functionName: deleteStudent
 
 # you can add statements to the Lambda function's IAM Role here
 #  iamRoleStatements:
@@ -79,11 +132,11 @@ custom:
 #    - exclude-me-dir/**
 
 functions:
-  add:
-    handler: handler.add
+  create:
+    handler: handler.create
     events:
       - http:
-          path: add
+          path: create
           method: put
           integration: lambda
   getById:
@@ -269,4 +322,27 @@ resources:
                     - "mobileanalytics:PutEvents"
                     - "cognito-sync:*"
                     - "cognito-identity:*"
+                  Resource: "*"
+    # AppSync lambda role
+    AppSyncLambdaServiceRole:
+      Type: "AWS::IAM::Role"
+      Properties:
+        RoleName: "Lambda-${self:custom.appSync.serviceRole}"
+        AssumeRolePolicyDocument:
+          Version: "2012-10-17"
+          Statement:
+            - Effect: "Allow"
+              Principal:
+                Service:
+                  - "appsync.amazonaws.com"
+              Action:
+                - "sts:AssumeRole"
+        Policies:
+          - PolicyName: "Lambda-${self:custom.appSync.serviceRole}-Policy"
+            PolicyDocument:
+              Version: "2012-10-17"
+              Statement:
+                - Effect: "Allow"
+                  Action:
+                    - "lambda:invokeFunction"
                   Resource: "*"
