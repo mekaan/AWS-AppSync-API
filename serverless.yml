@@ -327,7 +327,7 @@ resources:
     AppSyncLambdaServiceRole:
       Type: "AWS::IAM::Role"
       Properties:
-        RoleName: "Lambda-${self:custom.appSync.serviceRole}"
+        RoleName: "${self:custom.stage}-Lambda-${self:custom.appSync.serviceRole}"
         AssumeRolePolicyDocument:
           Version: "2012-10-17"
           Statement:
